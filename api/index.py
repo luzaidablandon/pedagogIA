@@ -21,7 +21,7 @@ async def preguntar(q: str = Query(..., description="La pregunta para la IA")):
         contexto = "\n".join([resultado['content'] for resultado in busqueda['results']])
         
         # 2. El Cerebro (Gemini) procesa la info
-        model = genai.GenerativeModel('gemini-1.5-flash') # Usamos flash por ser más rápido y gratuito
+      model = genai.GenerativeModel('gemini-pro') # Usamos flash por ser más rápido y gratuito
         
         prompt_instrucciones = f"""
         Eres PedagogIA, una asistente experta en educación e Inteligencia Artificial.
