@@ -39,17 +39,26 @@ html_content = """
 </html>
 """
 
-@app.get("/")
-async def home():
-    return HTMLResponse(content=html_content)
-
 @app.get("/preguntar")
 async def preguntar(q: str = Query(...)):
     try:
+        # Investigador (Tavily)
         search = tavily.search(query=q, max_results=2)
         context = "\\n".join([r['content'] for r in search['results']])
-       model = genai.GenerativeModel('gemini-1.5-flash')
-        response = model.generate_content(f"Eres PedagogIA. Responde breve: {q}. Contexto: {context}")
+        
+        # Cerebro (Gemini 1.5 Flash)
+        model = genai.GenerativeModel(model_name='models/gemini-1.5-flash')
+        
+        # Instrucciones ejecutivas
+        prompt = f"""
+        Actúa como PedagogIA. 
+        Contexto real: {context}
+        Consulta: {q}
+        Responde de forma ejecutiva, usando viñetas y un lenguaje profesional.
+        """
+        
+        response = model.generate_content(prompt)
         return {"respuesta": response.text}
     except Exception as e:
+        # Esto nos ayudará a ver el error real si algo falla
         return {"error": str(e)}
