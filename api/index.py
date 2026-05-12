@@ -3,15 +3,18 @@ from fastapi import FastAPI, Query
 import google.generativeai as genai
 from tavily import TavilyClient
 
+from fastapi.responses import HTMLResponse
+
 app = FastAPI()
 
 # Configuración de las llaves que pusiste en Vercel
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 tavily = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def home():
-    return {"proyecto": "PedagogIA", "estado": "Cerebro conectado"}
+    with open("index.html", "r", encoding="utf-8") as f:
+        return f.read()
 
 @app.get("/preguntar")
 async def preguntar(q: str = Query(..., description="La pregunta para la IA")):
@@ -21,7 +24,7 @@ async def preguntar(q: str = Query(..., description="La pregunta para la IA")):
         contexto = "\n".join([resultado['content'] for resultado in busqueda['results']])
         
         # 2. El Cerebro (Gemini) procesa la info
-      model = genai.GenerativeModel('gemini-pro') # Usamos flash por ser más rápido y gratuito
+        model = genai.GenerativeModel('gemini-1.5-flash') # Usamos flash por ser más rápido y gratuito
         
         prompt_instrucciones = f"""
         Eres PedagogIA, una asistente experta en educación e Inteligencia Artificial.
