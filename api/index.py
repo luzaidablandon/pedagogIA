@@ -1,52 +1,40 @@
 import os
 from fastapi import FastAPI, Query
+from fastapi.responses import HTMLResponse
 import google.generativeai as genai
 from tavily import TavilyClient
 
-from fastapi.responses import HTMLResponse
-
 app = FastAPI()
 
-# Configuración de las llaves que pusiste en Vercel
+# Configuración de las llaves
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 tavily = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
 
 @app.get("/", response_class=HTMLResponse)
 def home():
-    with open("index.html", "r", encoding="utf-8") as f:
-        return f.read()
+    # Buscamos el archivo index.html en la raíz del proyecto
+    ruta_html = os.path.join(os.getcwd(), "index.html")
+    try:
+        with open(ruta_html, "r", encoding="utf-8") as f:
+            return f.read()
+    except FileNotFoundError:
+        return """
+        <h1>PedagogIA</h1>
+        <p>Error: El archivo index.html no se encuentra en la raíz.</p>
+        <p>Asegúrate de que el archivo esté fuera de la carpeta 'api'.</p>
+        """
 
 @app.get("/preguntar")
 async def preguntar(q: str = Query(..., description="La pregunta para la IA")):
     try:
-        # 1. El Investigador (Tavily) busca en la web
         busqueda = tavily.search(query=q, max_results=3)
         contexto = "\n".join([resultado['content'] for resultado in busqueda['results']])
         
-        # 2. El Cerebro (Gemini) procesa la info
-        model = genai.GenerativeModel('gemini-1.5-flash') # Usamos flash por ser más rápido y gratuito
+        model = genai.GenerativeModel('gemini-pro')
         
-        prompt_instrucciones = f"""
-        Eres PedagogIA, una asistente experta en educación e Inteligencia Artificial.
-        Tu estilo es minimalista, ejecutivo y profesional.
-        
-        CONTEXTO ACTUALIZADO DE LA WEB:
-        {contexto}
-        
-        PREGUNTA DEL USUARIO:
-        {q}
-        
-        INSTRUCCIONES:
-        1. Responde de forma directa y clara.
-        2. Usa bullet points para facilitar la lectura.
-        3. Si la información viene de la web, menciónalo brevemente.
-        """
+        prompt_instrucciones = f"Actúa como PedagogIA. Contexto: {contexto}. Pregunta: {q}"
         
         response = model.generate_content(prompt_instrucciones)
-        
-        return {
-            "respuesta": response.text,
-            "fuentes": [r['url'] for r in busqueda['results']]
-        }
+        return {"respuesta": response.text}
     except Exception as e:
         return {"error": str(e)}
