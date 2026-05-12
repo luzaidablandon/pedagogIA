@@ -6,35 +6,27 @@ from tavily import TavilyClient
 
 app = FastAPI()
 
-# Configuración de las llaves
+# Configuración de APIs
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 tavily = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
 
 @app.get("/", response_class=HTMLResponse)
-def home():
-    # Buscamos el archivo index.html en la raíz del proyecto
-    ruta_html = os.path.join(os.getcwd(), "index.html")
-    try:
-        with open(ruta_html, "r", encoding="utf-8") as f:
-            return f.read()
-    except FileNotFoundError:
-        return """
-        <h1>PedagogIA</h1>
-        <p>Error: El archivo index.html no se encuentra en la raíz.</p>
-        <p>Asegúrate de que el archivo esté fuera de la carpeta 'api'.</p>
-        """
+async def read_index():
+    # Buscamos el HTML en la raíz del proyecto
+    # En Vercel, la raíz está un nivel arriba de la carpeta 'api'
+    path = os.path.join(os.path.dirname(__file__), "..", "index.html")
+    with open(path, "r", encoding="utf-8") as f:
+        return f.read()
 
 @app.get("/preguntar")
-async def preguntar(q: str = Query(..., description="La pregunta para la IA")):
+async def preguntar(q: str = Query(..., description="Consulta")):
     try:
-        busqueda = tavily.search(query=q, max_results=3)
-        contexto = "\n".join([resultado['content'] for resultado in busqueda['results']])
+        search = tavily.search(query=q, max_results=3)
+        context = "\n".join([r['content'] for r in search['results']])
         
         model = genai.GenerativeModel('gemini-pro')
+        response = model.generate_content(f"Eres PedagogIA. Contexto: {context}. Pregunta: {q}")
         
-        prompt_instrucciones = f"Actúa como PedagogIA. Contexto: {contexto}. Pregunta: {q}"
-        
-        response = model.generate_content(prompt_instrucciones)
         return {"respuesta": response.text}
     except Exception as e:
         return {"error": str(e)}
