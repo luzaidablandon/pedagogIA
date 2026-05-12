@@ -48,7 +48,7 @@ async def preguntar(q: str = Query(...)):
     try:
         search = tavily.search(query=q, max_results=2)
         context = "\\n".join([r['content'] for r in search['results']])
-        model = genai.GenerativeModel('gemini-pro')
+       model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(f"Eres PedagogIA. Responde breve: {q}. Contexto: {context}")
         return {"respuesta": response.text}
     except Exception as e:
