@@ -6,96 +6,77 @@ def get_html_content():
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PedagogIA | SENA</title>
+    
+    <!-- Carga del Favicon (.ico) -->
+    <link rel="icon" type="image/x-icon" href="/imagenes/logo.ico">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #ffffff; color: #000000; overflow: hidden; }
-        
-        /* Botones Flotantes estilo TikTok */
-        .floating-actions { 
-            position: fixed; right: 20px; top: 50%; transform: translateY(-50%); 
-            display: flex; flex-direction: column; gap: 15px; z-index: 100; 
-        }
-        .action-group { position: relative; display: flex; align-items: center; justify-content: center; }
-        .action-btn { 
-            width: 55px; height: 55px; border-radius: 50%; background: #000; color: #fff; 
-            display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: 2px solid transparent;
-        }
-        .action-btn:hover { background: #39A900; transform: scale(1.1); border-color: #fff; }
-        .action-label { 
-            position: absolute; right: 70px; background: #000; color: #fff; padding: 6px 12px; 
-            border-radius: 8px; font-size: 11px; opacity: 0; transition: 0.3s; pointer-events: none; 
-            white-space: nowrap; font-weight: 600;
-        }
-        .action-group:hover .action-label { opacity: 1; transform: translateX(-5px); }
-        
-        /* Chat Area */
-        .chat-container { height: calc(100vh - 200px); overflow-y: auto; scrollbar-width: none; }
+        body { font-family: 'Inter', sans-serif; background-color: #ffffff; color: #000000; display: flex; flex-direction: column; height: 100vh; margin: 0; }
+        .chat-container { flex: 1; overflow-y: auto; padding: 20px; scrollbar-width: none; display: flex; flex-direction: column; gap: 1.5rem; }
         .chat-container::-webkit-scrollbar { display: none; }
+        .floating-actions { position: fixed; right: 20px; top: 45%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; z-index: 50; }
+        .action-group { position: relative; display: flex; align-items: center; justify-content: center; }
+        .action-btn { width: 50px; height: 50px; border-radius: 50%; background: #000; color: #fff; display: flex; align-items: center; justify-content: center; transition: 0.3s; cursor: pointer; border: none; }
+        .action-btn:hover { background: #39A900; transform: scale(1.1); }
+        .action-label { position: absolute; right: 60px; background: #000; color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 10px; opacity: 0; pointer-events: none; white-space: nowrap; }
+        .action-group:hover .action-label { opacity: 1; }
+        .input-area { background: white; border-top: 1px solid #f0f0f0; padding: 20px; z-index: 100; }
     </style>
 </head>
-<body class="flex flex-col h-screen">
+<body>
 
-    <!-- Header Ejecutivo -->
-    <header class="p-6 border-b border-gray-100 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="flex items-center gap-4">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/SENA_logo.svg" alt="SENA" class="w-12 h-12">
+    <!-- Header con Logo Local y Subtítulo -->
+    <header class="p-4 border-b flex justify-between items-center bg-white">
+        <div class="flex items-center gap-3">
+            <!-- Carga del Logo Local (.png) -->
+            <img src="/imagenes/logo.png" alt="SENA" class="w-12 h-12 object-contain">
             <div>
-                <h1 class="text-xl font-bold tracking-tighter uppercase">Pedagog<span class="text-[#39A900]">IA</span></h1>
-                <p class="text-[9px] uppercase tracking-[0.4em] text-gray-400 font-semibold">Sistema de Inteligencia Institucional</p>
+                <h1 class="text-lg font-bold tracking-tighter uppercase leading-none">PEDAGOG<span class="text-[#39A900]">IA</span></h1>
+                <!-- Subtítulo solicitado -->
+                <p class="text-[10px] text-gray-500 font-medium mt-1">Agente IA de orientaciones para la virtualidad SENA</p>
             </div>
         </div>
-        <div class="flex items-center gap-3">
-            <span class="h-2 w-2 rounded-full bg-[#39A900] animate-pulse"></span>
-            <span class="text-[10px] font-mono text-gray-400 uppercase">Estado: Operativo</span>
-        </div>
+        <div class="text-[9px] text-gray-300 font-mono">ESTADO: LUZ_AIDA_ACTIVA</div>
     </header>
 
-    <!-- Acciones Administrativas Flotantes -->
     <div class="floating-actions">
         <div class="action-group">
-            <div class="action-btn" onclick="ejecutarAccion('acta')"><i class="fas fa-file-pen text-lg"></i></div>
-            <span class="action-label">Nueva Acta</span>
+            <button class="action-btn" onclick="ejecutarAccion('acta')"><i class="fas fa-file-signature"></i></button>
+            <span class="action-label">Acta</span>
         </div>
         <div class="action-group">
-            <div class="action-btn" onclick="ejecutarAccion('notificacion')"><i class="fas fa-paper-plane text-lg"></i></div>
-            <span class="action-label">Notificar Ficha</span>
+            <button class="action-btn" onclick="ejecutarAccion('notificacion')"><i class="fas fa-paper-plane"></i></button>
+            <span class="action-label">Notificación</span>
         </div>
         <div class="action-group">
-            <div class="action-btn" onclick="ejecutarAccion('reunion')"><i class="fas fa-calendar-check text-lg"></i></div>
-            <span class="action-label">Agendar Reunión</span>
-        </div>
-        <div class="action-group">
-            <div class="action-btn" onclick="ejecutarAccion('resumen')"><i class="fas fa-book-open text-lg"></i></div>
-            <span class="action-label">Resumen Normativo</span>
+            <button class="action-btn" onclick="ejecutarAccion('reunion')"><i class="fas fa-calendar-alt"></i></button>
+            <span class="action-label">Reunión</span>
         </div>
     </div>
 
-    <!-- Main Chat -->
-    <main class="flex-1 max-w-4xl w-full mx-auto p-6 flex flex-col justify-end">
-        <div id="chat-box" class="chat-container space-y-6">
-            <!-- Mensaje Inicial -->
-            <div class="flex gap-4">
-                <div class="w-9 h-9 bg-black rounded-full flex items-center justify-center text-white text-[10px] font-bold">IA</div>
-                <div class="bg-gray-100 p-5 rounded-2xl rounded-tl-none max-w-[85%] text-sm leading-relaxed border border-gray-200">
-                    Bienvenida, **Instructora Luz Aida**. ¿En qué proceso administrativo o pedagógico del SENA puedo asistirle hoy?
-                </div>
+    <main id="chat-box" class="chat-container max-w-3xl mx-auto w-full">
+        <div class="flex gap-3">
+            <div class="w-8 h-8 bg-black rounded-full flex items-center justify-center text-white text-[8px] font-bold">IA</div>
+            <div class="bg-gray-100 p-4 rounded-2xl rounded-tl-none text-sm max-w-[80%]">
+                Bienvenida Instructora. El agente de virtualidad está activo. ¿Qué tarea administrativa realizaremos?
             </div>
         </div>
     </main>
 
-    <!-- Input Box -->
-    <footer class="p-8 bg-white">
-        <div class="max-w-4xl mx-auto flex gap-4 bg-gray-50 p-2 rounded-3xl border border-gray-100 shadow-inner">
-            <input type="text" id="userInput" placeholder="Escriba su consulta institucional aquí..." 
-                   class="flex-1 p-4 bg-transparent border-none focus:ring-0 outline-none text-sm">
-            <button onclick="enviarMensaje()" class="bg-black text-white w-14 h-14 rounded-2xl flex items-center justify-center hover:bg-[#39A900] transition-all">
+    <footer class="input-area">
+        <div class="max-w-3xl mx-auto relative flex items-center">
+            <input type="text" id="userInput" 
+                   placeholder="Escriba aquí su requerimiento..." 
+                   class="w-full p-4 pr-16 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:border-[#39A900] text-sm shadow-inner"
+                   onkeypress="if(event.key === 'Enter') enviarMensaje()">
+            <button onclick="enviarMensaje()" 
+                    class="absolute right-2 w-10 h-10 bg-black text-white rounded-xl flex items-center justify-center hover:bg-[#39A900] transition-colors">
                 <i class="fas fa-arrow-up"></i>
             </button>
         </div>
-        <p class="text-[9px] text-center mt-4 text-gray-400 uppercase tracking-widest">Solo se utiliza información oficial de dominios SENA</p>
     </footer>
 
     <script>
@@ -107,8 +88,8 @@ def get_html_content():
             const texto = input.value;
             input.value = '';
             
-            chatBox.innerHTML += `<div class="flex justify-end gap-4 animate-fade-in">
-                <div class="bg-black text-white p-5 rounded-2xl rounded-tr-none max-w-[85%] text-sm shadow-lg">${texto}</div>
+            chatBox.innerHTML += `<div class="flex justify-end gap-3">
+                <div class="bg-black text-white p-4 rounded-2xl rounded-tr-none text-sm max-w-[80%]">${texto}</div>
             </div>`;
             chatBox.scrollTop = chatBox.scrollHeight;
 
@@ -116,27 +97,21 @@ def get_html_content():
                 const res = await fetch(`/api/preguntar?q=${encodeURIComponent(texto)}`);
                 const data = await res.json();
                 
-                chatBox.innerHTML += `<div class="flex gap-4 animate-fade-in">
-                    <div class="w-9 h-9 bg-[#39A900] rounded-full flex items-center justify-center text-white text-[10px] font-bold">IA</div>
-                    <div class="bg-white p-5 rounded-2xl rounded-tl-none max-w-[85%] text-sm border border-gray-200 shadow-sm">
+                chatBox.innerHTML += `<div class="flex gap-3">
+                    <div class="w-8 h-8 bg-[#39A900] rounded-full flex items-center justify-center text-white text-[8px] font-bold">IA</div>
+                    <div class="bg-white p-4 rounded-2xl rounded-tl-none text-sm max-w-[80%] border shadow-sm">
                         ${data.respuesta}
-                        <div class="mt-3 pt-3 border-t border-gray-50 text-[10px] text-gray-400">
-                            <b>Fuente:</b> ${data.fuente || 'Verificada institucional'}
-                        </div>
                     </div>
                 </div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
-            } catch (e) {
-                console.error("Error de conexión");
-            }
+            } catch (e) { console.error(e); }
         }
 
         function ejecutarAccion(tipo) {
             const prompts = {
-                'acta': 'Solicito apoyo para redactar un acta de compromiso por bajo rendimiento académico.',
-                'notificacion': 'Redacta una notificación para informar a los aprendices sobre un cambio en la sesión de formación.',
-                'reunion': 'Ayúdame a organizar una reunión para el equipo ejecutor de la ficha.',
-                'resumen': 'Resume los lineamientos más recientes de la comunidad de instructores SENA.'
+                'acta': 'Generar borrador de acta de compromiso académica.',
+                'notificacion': 'Redactar notificación oficial para aprendices virtuales.',
+                'reunion': 'Agenda de reunión de equipo pedagógico.'
             };
             document.getElementById('userInput').value = prompts[tipo];
             enviarMensaje();
